@@ -1,0 +1,31 @@
+name: Merge EPG v2
+on:
+  schedule: [{ cron: '0 * * * *' }]
+  workflow_dispatch:
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install requests
+      - name: Merge EPG
+        env:
+          EPG_URL1: ${{ secrets.EPG_URL1 }}
+          EPG_URL2: ${{ secrets.EPG_URL2 }}
+          OUTPUT_DIR: build
+        run: python scripts_v2/merge_epg_v2.py
+      - name: Publish release assets (latest-v2)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-v2
+          name: latest-v2
+          files: |
+            build/merged_epg.xml
+            build/merged_epg.xml.gz
+          make_latest: true
+          replace: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
