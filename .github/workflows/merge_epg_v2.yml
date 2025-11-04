@@ -26,6 +26,7 @@ jobs:
             build/merged_epg.xml
             build/merged_epg.xml.gz
           make_latest: true
-          replace: true
+          overwrite_files: true
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
